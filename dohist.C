@@ -313,10 +313,12 @@ int main(int argc, char **argv) {
 // fill output tree
     bonsaiTree.Fill();
   } // loop on events
-  delete f;
-  delete f1;
+  
   ftree->cd();
   bonsaiTree.Write();
+  delete f;
+  delete f1;
+
 }
 std::vector<double> calibscin(std::vector<double> vectorscin){
 	std::vector<double> s_cont;
@@ -387,7 +389,7 @@ std::tuple<double, double, double> maptower(int index, string side){
 //  cout << " thetap " << theta << endl;
 //get phi
   double phi_unit = 360./NZrot;
-  double phi = (sliceindex)*phi_unit;
+  double phi = (sliceindex)*phi_unit+5.0;
   
   if (side == "right"){
 //     cout << " thetai " << theta+90. << " phii " << phi << " etai " <<  -log(tan(((90.-theta)*pi/180./2.))) << endl;
