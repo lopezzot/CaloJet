@@ -36,6 +36,7 @@ vector<fastjet::PseudoJet> jet_cher;
 vector<fastjet::PseudoJet> jet_rec;
 vector<fastjet::PseudoJet> jet_tru;
 vector<TLorentzVector> muvec;
+vector <double> emcomp;
 
 vector<double> Calib_VectorScinR;
 vector<double> Calib_VectorScinL;
@@ -263,7 +264,7 @@ int main(int argc, char **argv) {
 //
 //   calculate EM fraction for jets
 //
-    vector <double> emcomp;
+    emcomp.clear();
     for(uint jt=0; jt<jet_tru.size(); jt++) {
        vector<fastjet::PseudoJet> constituents = jet_tru[jt].constituents();
        double eem=0;
