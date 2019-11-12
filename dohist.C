@@ -46,7 +46,7 @@ vector<double> Calib_VectorCherL;
 double GeV=1000.;
 double pi=3.14159265;
 double threshold=0.01;
-double etalim=5;
+double etalim=5; //5.0
 //////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv) { 
   vector<double> calibscin(std::vector<double> vectorscin);
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
       inputparticles_scin.clear();
       inputparticles_cher.clear();
 // right side
-      for(int towerindex=0; towerindex<75*36; towerindex++) {
+      for(int towerindex=1; towerindex<=75*36; towerindex++) {
         auto thphieta=maptower(towerindex, "right");
         double theta=get<0>(thphieta);
         double phi=get<1>(thphieta);
@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
         }  
       }
 // left sid3
-      for(int towerindex=0; towerindex<75*36; towerindex++) {
+      for(int towerindex=1; towerindex<=75*36; towerindex++) {
         auto thphieta=maptower(towerindex, "left");
         double theta=get<0>(thphieta);
         double phi=get<1>(thphieta);
@@ -409,7 +409,7 @@ std::tuple<double, double, double> maptower(int index, string side){
 //  cout << " thetap " << theta << endl;
 //get phi
   double phi_unit = 360./NZrot;
-  double phi = (sliceindex)*phi_unit+5.0;
+  double phi = (sliceindex)*phi_unit;
   
   if (side == "right"){
 //     cout << " thetai " << theta+90. << " phii " << phi << " etai " <<  -log(tan(((90.-theta)*pi/180./2.))) << endl;

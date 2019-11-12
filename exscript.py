@@ -1,7 +1,7 @@
 import os
 import glob
 
-energies = [30,50,70,90,150,250]
+energies = [30,50,70,90,250]
 
 path = "/home/software/Calo/results/jet_highstat/jetscan30k/"
 
