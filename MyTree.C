@@ -26,6 +26,8 @@ void MyTree::Init()
    fChain->Branch("edep",&edep,"edep/D");
    fChain->Branch("muene_sci",&muene_sci,"muene_sci/D");
    fChain->Branch("muene_che",&muene_che,"muene_che/D");
+   fChain->Branch("emcomp1",&emcomp1,"emcomp1/D");
+   fChain->Branch("emcomp2",&emcomp2,"emcomp2/D");
 
    fChain->Branch("j1t_E",&j1t_E,"j1t_E/D");
    fChain->Branch("j1t_pt",&j1t_pt,"j1t_pt/D");
@@ -70,6 +72,8 @@ void MyTree::Reset()
    edep=-1.;
    muene_sci=-1.;
    muene_che=-1.;
+   emcomp1=-1.;
+   emcomp2=-1.;
 
    j1t_E=-1.;
    j1t_pt=-1.;

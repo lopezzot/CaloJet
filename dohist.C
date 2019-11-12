@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
           trup.SetPtEtaPhiM(mcs_pt->at(itru), mcs_eta->at(itru), mcs_phi->at(itru),
                             mcs_m->at(itru));
           fastjet::PseudoJet fj(trup.Px(), trup.Py(), trup.Pz(), trup.E());
-//          fj.set_user_index(itru);
+          fj.set_user_index(itru);
           inputparticles_tru.push_back(fj);
         }
       }
@@ -136,6 +136,8 @@ int main(int argc, char **argv) {
     fastjet::JetDefinition jet_def(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
     fastjet::ClusterSequence clust_seq(inputparticles_tru, jet_def); 
     jetexc = fastjet::sorted_by_E(clust_seq.exclusive_jets(int(2)));
+
+
 //    cout << " phi " << jetexc[0].phi() << endl;
 //
 //  now the rec part
@@ -259,9 +261,24 @@ int main(int argc, char **argv) {
         jet_tru.push_back(matchjet(jet_rec[jn], jetexc)); 
       }
 //
+//   calculate EM fraction for jets
+//
+    vector <double> emcomp;
+    for(uint jt=0; jt<jet_tru.size(); jt++) {
+       vector<fastjet::PseudoJet> constituents = jet_tru[jt].constituents();
+       double eem=0;
+       for (uint jc=0; jc<constituents.size(); jc++){
+	 int nc=constituents[jc].user_index();
+	 int partid = mcs_pdgId->at(nc);
+	 if(abs(partid)==22 || abs(partid)==11) eem+=mcs_E->at(nc);
+       }
+       emcomp.push_back(eem);
+    }   
+	 
+//
 //    save in ntuple
 //
-      if(jet_rec.size()==2) {
+      if(jet_rec.size()==2 && jet_tru.size()==2) {
         fastjet::PseudoJet jetrec=jet_rec[0]+jet_rec[1];
         fastjet::PseudoJet jettruth=jet_tru[0]+jet_tru[1];
 //
@@ -273,6 +290,8 @@ int main(int argc, char **argv) {
         bonsaiTree.edep= EnergyTot/1000.;
         bonsaiTree.muene_sci=muene_sci;
         bonsaiTree.muene_che=muene_che;
+	bonsaiTree.emcomp1=emcomp[0];
+	bonsaiTree.emcomp2=emcomp[1];
 //
         bonsaiTree.j1t_E=jet_tru[0].E();
         bonsaiTree.j1t_pt=jet_tru[0].pt();
