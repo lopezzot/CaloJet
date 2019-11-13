@@ -1,6 +1,8 @@
    Double_t        Energyem;
    Double_t        EnergyScin;
    Double_t        EnergyCher;
+   Double_t        neutrinoleakage;
+   Double_t        leakage;
    Double_t        NofCherenkovDetected;
    Double_t        EnergyTot;
    Double_t        PrimaryParticleEnergy;
@@ -16,6 +18,8 @@
    TBranch        *b_Energyem;   //!
    TBranch        *b_EnergyScin;   //!
    TBranch        *b_EnergyCher;   //!
+   TBranch        *b_neutrinoleakage;   //!
+   TBranch        *b_leakage;   //!
    TBranch        *b_NofCherenkovDetected;   //!
    TBranch        *b_EnergyTot;   //!
    TBranch        *b_PrimaryParticleEnergy;   //!
