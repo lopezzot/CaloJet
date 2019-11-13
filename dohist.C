@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
     jetexc.clear();
     fastjet::JetDefinition jet_def(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
     fastjet::ClusterSequence clust_seq(inputparticles_tru, jet_def); 
-    jetexc = fastjet::sorted_by_E(clust_seq.exclusive_jets(int(2)));
+    jetexc = clust_seq.exclusive_jets(int(2));
 
 
 //    cout << " phi " << jetexc[0].phi() << endl;
@@ -298,34 +298,50 @@ int main(int argc, char **argv) {
         bonsaiTree.j1t_pt=jet_tru[0].pt();
         bonsaiTree.j1t_eta=jet_tru[0].eta();
         bonsaiTree.j1t_phi=jet_tru[0].phi();
+        bonsaiTree.j1t_m=jet_tru[0].m();
+        bonsaiTree.j1t_theta=jet_tru[0].theta();
         bonsaiTree.j2t_E=jet_tru[1].E();
         bonsaiTree.j2t_pt=jet_tru[1].pt();
         bonsaiTree.j2t_eta=jet_tru[1].eta();
         bonsaiTree.j2t_phi=jet_tru[1].phi();
+        bonsaiTree.j2t_m=jet_tru[1].m();
+        bonsaiTree.j2t_theta=jet_tru[1].theta();
         bonsaiTree.j1r_E=jet_rec[0].E();
         bonsaiTree.j1r_pt=jet_rec[0].pt();
         bonsaiTree.j1r_eta=jet_rec[0].eta();
         bonsaiTree.j1r_phi=jet_rec[0].phi();
+        bonsaiTree.j1r_m=jet_rec[0].m();
+        bonsaiTree.j1r_theta=jet_rec[0].theta();
         bonsaiTree.j2r_E=jet_rec[1].E();
         bonsaiTree.j2r_pt=jet_rec[1].pt();
         bonsaiTree.j2r_eta=jet_rec[1].eta();
         bonsaiTree.j2r_phi=jet_rec[1].phi();
+        bonsaiTree.j2r_m=jet_rec[1].m();
+        bonsaiTree.j2r_theta=jet_rec[1].theta();
         bonsaiTree.j1s_E=jet_scin[0].E();
         bonsaiTree.j1s_pt=jet_scin[0].pt();
         bonsaiTree.j1s_eta=jet_scin[0].eta();
         bonsaiTree.j1s_phi=jet_scin[0].phi();
+        bonsaiTree.j1s_m=jet_scin[0].m();
+        bonsaiTree.j1s_theta=jet_scin[0].theta();
         bonsaiTree.j2s_E=jet_scin[1].E();
         bonsaiTree.j2s_pt=jet_scin[1].pt();
         bonsaiTree.j2s_eta=jet_scin[1].eta();
         bonsaiTree.j2s_phi=jet_scin[1].phi();
+        bonsaiTree.j2s_m=jet_scin[1].m();
+        bonsaiTree.j2s_theta=jet_scin[1].theta();
         bonsaiTree.j1c_E=jet_cher[0].E();
         bonsaiTree.j1c_pt=jet_cher[0].pt();
         bonsaiTree.j1c_eta=jet_cher[0].eta();
         bonsaiTree.j1c_phi=jet_cher[0].phi();
+        bonsaiTree.j1c_m=jet_cher[0].m();
+        bonsaiTree.j1c_theta=jet_cher[0].theta();
         bonsaiTree.j2c_E=jet_cher[1].E();
         bonsaiTree.j2c_pt=jet_cher[1].pt();
         bonsaiTree.j2c_eta=jet_cher[1].eta();
         bonsaiTree.j2c_phi=jet_cher[1].phi();
+        bonsaiTree.j2c_m=jet_cher[1].m();
+        bonsaiTree.j2c_theta=jet_cher[1].theta();
       }
           
     }// energy>0          
