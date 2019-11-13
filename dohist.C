@@ -37,6 +37,7 @@ vector<fastjet::PseudoJet> jet_rec;
 vector<fastjet::PseudoJet> jet_tru;
 vector<TLorentzVector> muvec;
 vector <double> emcomp;
+vector <double> etotjr;
 
 vector<double> Calib_VectorScinR;
 vector<double> Calib_VectorScinL;
@@ -265,15 +266,19 @@ int main(int argc, char **argv) {
 //   calculate EM fraction for jets
 //
     emcomp.clear();
+    etotjr.clear();
     for(uint jt=0; jt<jet_tru.size(); jt++) {
        vector<fastjet::PseudoJet> constituents = jet_tru[jt].constituents();
        double eem=0;
+       double etotj=0;
        for (uint jc=0; jc<constituents.size(); jc++){
 	 int nc=constituents[jc].user_index();
 	 int partid = mcs_pdgId->at(nc);
+	 etotj+=mcs_E->at(nc);
 	 if(abs(partid)==22 || abs(partid)==11) eem+=mcs_E->at(nc);
        }
        emcomp.push_back(eem);
+       etotjr.push_back(etotj);
     }   
 	 
 //
@@ -293,6 +298,10 @@ int main(int argc, char **argv) {
         bonsaiTree.muene_che=muene_che;
 	bonsaiTree.emcomp1=emcomp[0];
 	bonsaiTree.emcomp2=emcomp[1];
+	bonsaiTree.etotjr1=etotjr[0];
+	bonsaiTree.etotjr2=etotjr[1];
+	bonsaiTree.eleak=leakage;
+	bonsaiTree.eleakn=neutrinoleakage;
 //
         bonsaiTree.j1t_E=jet_tru[0].E();
         bonsaiTree.j1t_pt=jet_tru[0].pt();

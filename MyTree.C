@@ -28,6 +28,10 @@ void MyTree::Init()
    fChain->Branch("muene_che",&muene_che,"muene_che/D");
    fChain->Branch("emcomp1",&emcomp1,"emcomp1/D");
    fChain->Branch("emcomp2",&emcomp2,"emcomp2/D");
+   fChain->Branch("etotjr1",&etotjr1,"etotjr1/D");
+   fChain->Branch("etotjr2",&etotjr2,"etotjr2/D");
+   fChain->Branch("eleak",&eleak,"eleak/D");
+   fChain->Branch("eleakn",&eleakn,"eleakn/D");
 
    fChain->Branch("j1t_E",&j1t_E,"j1t_E/D");
    fChain->Branch("j1t_pt",&j1t_pt,"j1t_pt/D");
@@ -90,6 +94,8 @@ void MyTree::Reset()
    muene_che=-1.;
    emcomp1=-1.;
    emcomp2=-1.;
+   etotjr1=-1.;
+   etotjr2=-1.;
 
    j1t_E=-1.;
    j1t_pt=-1.;
