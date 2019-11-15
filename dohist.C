@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
         nmuon++;
       } 
     } // loop on truth particles    
-    cout << etott << endl;
+//    cout << etott << endl;
     jetexc.clear();
     fastjet::JetDefinition jet_def(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
     fastjet::ClusterSequence clust_seq(inputparticles_tru, jet_def); 
