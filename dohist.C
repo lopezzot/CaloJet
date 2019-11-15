@@ -36,6 +36,7 @@ vector<fastjet::PseudoJet> jet_cher;
 vector<fastjet::PseudoJet> jet_rec;
 vector<fastjet::PseudoJet> jet_tru;
 vector<TLorentzVector> muvec;
+vector<TLorentzVector> nuvec;
 vector <double> emcomp;
 vector <double> etotjr;
 
@@ -104,8 +105,10 @@ int main(int argc, char **argv) {
     bonsaiTree.Reset();
     inputparticles_tru.clear();
     muvec.clear();
+    nuvec.clear();
     int nmuon=0;
     int nneu=0;
+    int nmun=0;
     double muene_sci=0.;
     double muene_che=0.;
     double etott=0;
@@ -132,6 +135,13 @@ int main(int argc, char **argv) {
         mcs_m->at(itru));
         muvec.push_back(muon);
         nmuon++;
+      } 
+      if(abs(partid) == 14){
+        TLorentzVector numu;
+        numu.SetPtEtaPhiM(mcs_pt->at(itru), mcs_eta->at(itru), mcs_phi->at(itru),
+        mcs_m->at(itru));
+        nuvec.push_back(numu);
+        nmun++;
       } 
     } // loop on truth particles    
 //    cout << etott << endl;
@@ -293,8 +303,15 @@ int main(int argc, char **argv) {
         }
         emcomp.push_back(eem);
         etotjr.push_back(etotj);
-      }   
-	 
+      }  
+      double emu=0.;
+      double enumu=0; 
+      double mnumu=0;
+      if(nmuon==1)emu=muvec[0].E();
+      if(nmuon==1 && nmun==1) {
+        enumu=muvec[0].E()+nuvec[0].E();
+        mnumu=(muvec[0]+nuvec[0]).M();
+      }
 //
 //    save in ntuple
 //
@@ -317,6 +334,9 @@ int main(int argc, char **argv) {
 	bonsaiTree.eleak=leakage;
 	bonsaiTree.eleakn=neutrinoleakage;
 	bonsaiTree.drmmu=drminmu;
+	bonsaiTree.enumu=enumu;
+	bonsaiTree.mnumu=mnumu;
+	bonsaiTree.emu=emu;
 	
 //
         bonsaiTree.j1t_E=jet_tru[0].E();

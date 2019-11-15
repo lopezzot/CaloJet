@@ -37,6 +37,9 @@ public :
    Double_t eleak;
    Double_t eleakn;
    Double_t drmmu;
+   Double_t enumu;
+   Double_t mnumu;
+   Double_t emu;
  
    Double_t j1t_E;
    Double_t j1t_pt;
@@ -102,6 +105,9 @@ public :
    TBranch *b_eleak;
    TBranch *b_eleakn;
    TBranch *b_drmmu;
+   TBranch *b_enumu;
+   TBranch *b_mnumu;
+   TBranch *b_emu;
 
    TBranch *b_j1t_E;
    TBranch *b_j1t_pt;
