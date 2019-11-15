@@ -108,10 +108,11 @@ int main(int argc, char **argv) {
     int nneu=0;
     double muene_sci=0.;
     double muene_che=0.;
-
+    double etott=0;
     for(uint itru=0;itru<mcs_n;itru++){
       int partid = mcs_pdgId->at(itru);
       double parteta = mcs_eta->at(itru);
+      etott+=mcs_E->at(itru);
       if(abs(partid) != 13 &&  
          abs(partid) !=12  && abs(partid) != 14 && abs(partid) != 16 &&
          abs(partid) != 1000022){
@@ -124,7 +125,7 @@ int main(int argc, char **argv) {
           inputparticles_tru.push_back(fj);
         }
       }
-      if(abs(partid) ==12  && abs(partid) == 14 && abs(partid) == 16)nneu++;
+      if(abs(partid) ==12  ||  abs(partid) == 14 || abs(partid) == 16)nneu++;
       if(abs(partid) == 13){
         TLorentzVector muon;
         muon.SetPtEtaPhiM(mcs_pt->at(itru), mcs_eta->at(itru), mcs_phi->at(itru),
@@ -133,7 +134,7 @@ int main(int argc, char **argv) {
         nmuon++;
       } 
     } // loop on truth particles    
-
+    cout << etott << endl;
     jetexc.clear();
     fastjet::JetDefinition jet_def(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
     fastjet::ClusterSequence clust_seq(inputparticles_tru, jet_def); 
