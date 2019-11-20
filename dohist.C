@@ -171,6 +171,8 @@ int main(int argc, char **argv) {
     if(energy>0){
       inputparticles_scin.clear();
       inputparticles_cher.clear();
+      TLorentzVector scin_bos(0.,0.,0.,0.);
+      TLorentzVector cher_bos(0.,0.,0.,0.);
 // right side
       for(int towerindex=1; towerindex<=75*36; towerindex++) {
         auto thphieta=maptower(towerindex, "right");
@@ -199,6 +201,8 @@ int main(int argc, char **argv) {
             muene_che = muene_che+towercher.E();
           }
           if(deltamumin>0.1){
+            scin_bos=scin_bos+towerscin;	
+            cher_bos=cher_bos+towercher;	
             inputparticles_scin.push_back(fastjet::PseudoJet(towerscin.Px(), 
                                           towerscin.Py(), towerscin.Pz(), towerscin.E()));
             inputparticles_cher.push_back(fastjet::PseudoJet(towercher.Px(), 
@@ -235,6 +239,8 @@ int main(int argc, char **argv) {
             muene_che = muene_che+towercher.E();
           }
           if(deltamumin>0.1){
+            scin_bos=scin_bos+towerscin;	
+            cher_bos=cher_bos+towercher;	
             inputparticles_scin.push_back(fastjet::PseudoJet(towerscin.Px(), 
                                           towerscin.Py(), towerscin.Pz(), towerscin.E()));
             inputparticles_cher.push_back(fastjet::PseudoJet(towercher.Px(), 
@@ -242,6 +248,12 @@ int main(int argc, char **argv) {
           }
         }  
       }
+      fastjet::PseudoJet merge_bos =mergejet(
+            fastjet::PseudoJet(scin_bos.Px(), scin_bos.Py(), scin_bos.Pz(), scin_bos.E()),
+            fastjet::PseudoJet(cher_bos.Px(), cher_bos.Py(), cher_bos.Pz(), cher_bos.E()));
+
+      double mbos_noc=merge_bos.m();
+
 //      cout << " input scin " << inputparticles_scin.size()  << endl;
 //
       fastjet::JetDefinition jet_defs(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
@@ -333,6 +345,7 @@ int main(int argc, char **argv) {
 	bonsaiTree.etotjr2=etotjr[1];
 	bonsaiTree.eleak=leakage;
 	bonsaiTree.eleakn=neutrinoleakage;
+	bonsaiTree.mbos_noc=mbos_noc;
 	bonsaiTree.drmmu=drminmu;
 	bonsaiTree.enumu=enumu;
 	bonsaiTree.mnumu=mnumu;

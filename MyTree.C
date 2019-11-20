@@ -36,6 +36,7 @@ void MyTree::Init()
    fChain->Branch("enumu",&enumu,"enumu/D");
    fChain->Branch("mnumu",&mnumu,"mnumu/D");
    fChain->Branch("emu",&emu,"emu/D");
+   fChain->Branch("mbos_noc",&mbos_noc,"mbos_noc/D");
 
    fChain->Branch("j1t_E",&j1t_E,"j1t_E/D");
    fChain->Branch("j1t_pt",&j1t_pt,"j1t_pt/D");
