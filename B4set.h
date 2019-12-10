@@ -11,6 +11,8 @@
    tree2->SetBranchAddress("EnergyScin", &EnergyScin, &b_EnergyScin);
    tree2->SetBranchAddress("EnergyCher", &EnergyCher, &b_EnergyCher);
    tree2->SetBranchAddress("NofCherenkovDetected", &NofCherenkovDetected, &b_NofCherenkovDetected);
+   tree2->SetBranchAddress("neutrinoleakage", &neutrinoleakage, &b_neutrinoleakage);
+   tree2->SetBranchAddress("leakage", &leakage, &b_leakage);
    tree2->SetBranchAddress("EnergyTot", &EnergyTot, &b_EnergyTot);
    tree2->SetBranchAddress("PrimaryParticleEnergy", &PrimaryParticleEnergy, &b_PrimaryParticleEnergy);
    tree2->SetBranchAddress("PrimaryParticleName", PrimaryParticleName, &b_PrimaryParticleName);

@@ -36,6 +36,9 @@ vector<fastjet::PseudoJet> jet_cher;
 vector<fastjet::PseudoJet> jet_rec;
 vector<fastjet::PseudoJet> jet_tru;
 vector<TLorentzVector> muvec;
+vector<TLorentzVector> nuvec;
+vector <double> emcomp;
+vector <double> etotjr;
 
 vector<double> Calib_VectorScinR;
 vector<double> Calib_VectorScinL;
@@ -45,7 +48,7 @@ vector<double> Calib_VectorCherL;
 double GeV=1000.;
 double pi=3.14159265;
 double threshold=0.01;
-double etalim=5;
+double etalim=5; //5.0
 //////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv) { 
   vector<double> calibscin(std::vector<double> vectorscin);
@@ -102,14 +105,17 @@ int main(int argc, char **argv) {
     bonsaiTree.Reset();
     inputparticles_tru.clear();
     muvec.clear();
+    nuvec.clear();
     int nmuon=0;
     int nneu=0;
+    int nmun=0;
     double muene_sci=0.;
     double muene_che=0.;
-
+    double etott=0;
     for(uint itru=0;itru<mcs_n;itru++){
       int partid = mcs_pdgId->at(itru);
       double parteta = mcs_eta->at(itru);
+      etott+=mcs_E->at(itru);
       if(abs(partid) != 13 &&  
          abs(partid) !=12  && abs(partid) != 14 && abs(partid) != 16 &&
          abs(partid) != 1000022){
@@ -118,11 +124,11 @@ int main(int argc, char **argv) {
           trup.SetPtEtaPhiM(mcs_pt->at(itru), mcs_eta->at(itru), mcs_phi->at(itru),
                             mcs_m->at(itru));
           fastjet::PseudoJet fj(trup.Px(), trup.Py(), trup.Pz(), trup.E());
-//          fj.set_user_index(itru);
+          fj.set_user_index(itru);
           inputparticles_tru.push_back(fj);
         }
       }
-      if(abs(partid) ==12  && abs(partid) == 14 && abs(partid) == 16)nneu++;
+      if(abs(partid) ==12  ||  abs(partid) == 14 || abs(partid) == 16)nneu++;
       if(abs(partid) == 13){
         TLorentzVector muon;
         muon.SetPtEtaPhiM(mcs_pt->at(itru), mcs_eta->at(itru), mcs_phi->at(itru),
@@ -130,12 +136,21 @@ int main(int argc, char **argv) {
         muvec.push_back(muon);
         nmuon++;
       } 
+      if(abs(partid) == 14){
+        TLorentzVector numu;
+        numu.SetPtEtaPhiM(mcs_pt->at(itru), mcs_eta->at(itru), mcs_phi->at(itru),
+        mcs_m->at(itru));
+        nuvec.push_back(numu);
+        nmun++;
+      } 
     } // loop on truth particles    
-
+//    cout << etott << endl;
     jetexc.clear();
     fastjet::JetDefinition jet_def(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
     fastjet::ClusterSequence clust_seq(inputparticles_tru, jet_def); 
-    jetexc = fastjet::sorted_by_E(clust_seq.exclusive_jets(int(2)));
+    jetexc = clust_seq.exclusive_jets(int(2));
+
+
 //    cout << " phi " << jetexc[0].phi() << endl;
 //
 //  now the rec part
@@ -156,8 +171,10 @@ int main(int argc, char **argv) {
     if(energy>0){
       inputparticles_scin.clear();
       inputparticles_cher.clear();
+      TLorentzVector scin_bos(0.,0.,0.,0.);
+      TLorentzVector cher_bos(0.,0.,0.,0.);
 // right side
-      for(int towerindex=0; towerindex<75*36; towerindex++) {
+      for(int towerindex=1; towerindex<=75*36; towerindex++) {
         auto thphieta=maptower(towerindex, "right");
         double theta=get<0>(thphieta);
         double phi=get<1>(thphieta);
@@ -184,6 +201,8 @@ int main(int argc, char **argv) {
             muene_che = muene_che+towercher.E();
           }
           if(deltamumin>0.1){
+            scin_bos=scin_bos+towerscin;	
+            cher_bos=cher_bos+towercher;	
             inputparticles_scin.push_back(fastjet::PseudoJet(towerscin.Px(), 
                                           towerscin.Py(), towerscin.Pz(), towerscin.E()));
             inputparticles_cher.push_back(fastjet::PseudoJet(towercher.Px(), 
@@ -192,7 +211,7 @@ int main(int argc, char **argv) {
         }  
       }
 // left sid3
-      for(int towerindex=0; towerindex<75*36; towerindex++) {
+      for(int towerindex=1; towerindex<=75*36; towerindex++) {
         auto thphieta=maptower(towerindex, "left");
         double theta=get<0>(thphieta);
         double phi=get<1>(thphieta);
@@ -220,6 +239,8 @@ int main(int argc, char **argv) {
             muene_che = muene_che+towercher.E();
           }
           if(deltamumin>0.1){
+            scin_bos=scin_bos+towerscin;	
+            cher_bos=cher_bos+towercher;	
             inputparticles_scin.push_back(fastjet::PseudoJet(towerscin.Px(), 
                                           towerscin.Py(), towerscin.Pz(), towerscin.E()));
             inputparticles_cher.push_back(fastjet::PseudoJet(towercher.Px(), 
@@ -227,6 +248,12 @@ int main(int argc, char **argv) {
           }
         }  
       }
+      fastjet::PseudoJet merge_bos =mergejet(
+            fastjet::PseudoJet(scin_bos.Px(), scin_bos.Py(), scin_bos.Pz(), scin_bos.E()),
+            fastjet::PseudoJet(cher_bos.Px(), cher_bos.Py(), cher_bos.Pz(), cher_bos.E()));
+
+      double mbos_noc=merge_bos.m();
+
 //      cout << " input scin " << inputparticles_scin.size()  << endl;
 //
       fastjet::JetDefinition jet_defs(fastjet::ee_genkt_algorithm, 2.*pi, 1.);
@@ -259,9 +286,48 @@ int main(int argc, char **argv) {
         jet_tru.push_back(matchjet(jet_rec[jn], jetexc)); 
       }
 //
+//   muiso for W
+//
+     double drminmu=9999.;
+     if(muvec.size()>0) {	      
+       for(uint jt=0; jt<jet_tru.size(); jt++) {
+          TLorentzVector jj;
+          jj.SetPtEtaPhiM(jet_tru[jt].pt(), jet_tru[jt].eta(), jet_tru[jt].phi(),
+                        jet_tru[jt].m());
+          double deltaR=abs(jj.DeltaR(muvec[0]));
+	  if(deltaR<drminmu)drminmu=deltaR;
+       }
+     }
+//
+//   calculate EM fraction for jets
+//
+     emcomp.clear();
+     etotjr.clear();
+     for(uint jt=0; jt<jet_tru.size(); jt++) {
+        vector<fastjet::PseudoJet> constituents = jet_tru[jt].constituents();
+        double eem=0;
+        double etotj=0;
+        for (uint jc=0; jc<constituents.size(); jc++){
+	  int nc=constituents[jc].user_index();
+	  int partid = mcs_pdgId->at(nc);
+	  etotj+=mcs_E->at(nc);
+	  if(abs(partid)==22 || abs(partid)==11) eem+=mcs_E->at(nc);
+        }
+        emcomp.push_back(eem);
+        etotjr.push_back(etotj);
+      }  
+      double emu=0.;
+      double enumu=0; 
+      double mnumu=0;
+      if(nmuon==1)emu=muvec[0].E();
+      if(nmuon==1 && nmun==1) {
+        enumu=muvec[0].E()+nuvec[0].E();
+        mnumu=(muvec[0]+nuvec[0]).M();
+      }
+//
 //    save in ntuple
 //
-      if(jet_rec.size()==2) {
+      if(jet_rec.size()==2 && jet_tru.size()==2) {
         fastjet::PseudoJet jetrec=jet_rec[0]+jet_rec[1];
         fastjet::PseudoJet jettruth=jet_tru[0]+jet_tru[1];
 //
@@ -273,39 +339,67 @@ int main(int argc, char **argv) {
         bonsaiTree.edep= EnergyTot/1000.;
         bonsaiTree.muene_sci=muene_sci;
         bonsaiTree.muene_che=muene_che;
+	bonsaiTree.emcomp1=emcomp[0];
+	bonsaiTree.emcomp2=emcomp[1];
+	bonsaiTree.etotjr1=etotjr[0];
+	bonsaiTree.etotjr2=etotjr[1];
+	bonsaiTree.eleak=leakage;
+	bonsaiTree.eleakn=neutrinoleakage;
+	bonsaiTree.mbos_noc=mbos_noc;
+	bonsaiTree.drmmu=drminmu;
+	bonsaiTree.enumu=enumu;
+	bonsaiTree.mnumu=mnumu;
+	bonsaiTree.emu=emu;
+	
 //
         bonsaiTree.j1t_E=jet_tru[0].E();
         bonsaiTree.j1t_pt=jet_tru[0].pt();
         bonsaiTree.j1t_eta=jet_tru[0].eta();
         bonsaiTree.j1t_phi=jet_tru[0].phi();
+        bonsaiTree.j1t_m=jet_tru[0].m();
+        bonsaiTree.j1t_theta=jet_tru[0].theta();
         bonsaiTree.j2t_E=jet_tru[1].E();
         bonsaiTree.j2t_pt=jet_tru[1].pt();
         bonsaiTree.j2t_eta=jet_tru[1].eta();
         bonsaiTree.j2t_phi=jet_tru[1].phi();
+        bonsaiTree.j2t_m=jet_tru[1].m();
+        bonsaiTree.j2t_theta=jet_tru[1].theta();
         bonsaiTree.j1r_E=jet_rec[0].E();
         bonsaiTree.j1r_pt=jet_rec[0].pt();
         bonsaiTree.j1r_eta=jet_rec[0].eta();
         bonsaiTree.j1r_phi=jet_rec[0].phi();
+        bonsaiTree.j1r_m=jet_rec[0].m();
+        bonsaiTree.j1r_theta=jet_rec[0].theta();
         bonsaiTree.j2r_E=jet_rec[1].E();
         bonsaiTree.j2r_pt=jet_rec[1].pt();
         bonsaiTree.j2r_eta=jet_rec[1].eta();
         bonsaiTree.j2r_phi=jet_rec[1].phi();
+        bonsaiTree.j2r_m=jet_rec[1].m();
+        bonsaiTree.j2r_theta=jet_rec[1].theta();
         bonsaiTree.j1s_E=jet_scin[0].E();
         bonsaiTree.j1s_pt=jet_scin[0].pt();
         bonsaiTree.j1s_eta=jet_scin[0].eta();
         bonsaiTree.j1s_phi=jet_scin[0].phi();
+        bonsaiTree.j1s_m=jet_scin[0].m();
+        bonsaiTree.j1s_theta=jet_scin[0].theta();
         bonsaiTree.j2s_E=jet_scin[1].E();
         bonsaiTree.j2s_pt=jet_scin[1].pt();
         bonsaiTree.j2s_eta=jet_scin[1].eta();
         bonsaiTree.j2s_phi=jet_scin[1].phi();
+        bonsaiTree.j2s_m=jet_scin[1].m();
+        bonsaiTree.j2s_theta=jet_scin[1].theta();
         bonsaiTree.j1c_E=jet_cher[0].E();
         bonsaiTree.j1c_pt=jet_cher[0].pt();
         bonsaiTree.j1c_eta=jet_cher[0].eta();
         bonsaiTree.j1c_phi=jet_cher[0].phi();
+        bonsaiTree.j1c_m=jet_cher[0].m();
+        bonsaiTree.j1c_theta=jet_cher[0].theta();
         bonsaiTree.j2c_E=jet_cher[1].E();
         bonsaiTree.j2c_pt=jet_cher[1].pt();
         bonsaiTree.j2c_eta=jet_cher[1].eta();
         bonsaiTree.j2c_phi=jet_cher[1].phi();
+        bonsaiTree.j2c_m=jet_cher[1].m();
+        bonsaiTree.j2c_theta=jet_cher[1].theta();
       }
           
     }// energy>0          
@@ -313,10 +407,12 @@ int main(int argc, char **argv) {
 // fill output tree
     bonsaiTree.Fill();
   } // loop on events
-  delete f;
-  delete f1;
+  
   ftree->cd();
   bonsaiTree.Write();
+  delete f;
+  delete f1;
+
 }
 std::vector<double> calibscin(std::vector<double> vectorscin){
 	std::vector<double> s_cont;
