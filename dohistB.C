@@ -208,7 +208,64 @@ int main(int argc, char **argv) {
          double phitrack=-20.;
          double etrack=-1.;
          int ltrack=-1;
-         int pttrack=-1;
+         for(uint j=0; j<tracks.size(); j++) {
+           double pttrack=(tracks.at(j)).pt();
+//           if(pttrack <0.8)cout << " ptttrack " << pttrack << " ptloop " << ptloop << endl; 
+           if(abs(pttrack*1000-ptloop)<1.){
+             etatrack=(tracks.at(j)).eta(); 
+             phitrack=(tracks.at(j)).phi();
+             etrack=(tracks.at(j)).e();
+             ltrack=j;
+           }
+         }
+//
+//  matching truth track found, build vectors for subtraction
+//
+         if(etrack>-1.) {
+//
+//  vector of pointers to tracks 
+//
+           ltrvec.push_back(ltrack);
+//
+//   vector of 3-vectors of curved loopers
+//   need also to save the index of the cell to 
+//   find the jet which took in 
+//  
+           lcellvec.push_back(i);
+//
+           TLorentzVector subloop;
+           double ptcorr=etrack*sin(thetaLoop);
+           subloop.SetPtEtaPhiM(ptcorr, etaLoop, phiLoop, 0.);
+           sublv.push_back(subloop);     
+         } 
+            
+         cout << " ptloop " << ptloop << " Etaloop " << etaLoop <<  " phiLoop " << phiLoop << endl;
+         double c=0.29;
+         cout << " etot " << (eScinLoop - c*eCherLoop)/(1-c) << " etrack " << etrack << " etatrack " << etatrack << endl;
+        ptldone.push_back(ptloop);
+       }
+    } 
+    for(uint i=0; i<VectorR_loop->size(); i++) {
+       double ptloop=VectorR_loop->at(i);
+//
+//  remove duplicates in looper bank
+//  at present one just buys the first
+//
+       int used=0;
+       for(uint ild=0; ild<ptldone.size();ild++) {
+         if(ptloop == ptldone.at(ild))used=1;
+       } 
+       if(ptloop>0. && used==0) {
+         double eScinLoop=Calib_VectorScinR.at(i);
+         double eCherLoop=Calib_VectorCherR.at(i);
+         auto thphieta=maptower(i, "left");
+         double thetaLoop=get<0>(thphieta);
+         double phiLoop=get<1>(thphieta);
+         double etaLoop=get<2>(thphieta);
+         double etatrack=-20.;
+         double phitrack=-20.;
+         double etrack=-1.;
+         int ltrack=-1;
          for(uint j=0; j<tracks.size(); j++) {
            double pttrack=(tracks.at(j)).pt();
 //           if(pttrack <0.8)cout << " ptttrack " << pttrack << " ptloop " << ptloop << endl; 
@@ -288,7 +345,7 @@ int main(int argc, char **argv) {
           }
         }  
       }
-// left sid3
+// left side
       for(int towerindex=0; towerindex<75*36; towerindex++) {
         auto thphieta=maptower(towerindex, "left");
         double theta=get<0>(thphieta);
@@ -357,6 +414,19 @@ int main(int argc, char **argv) {
       for(uint jn=0; jn<jet_scin.size();jn++) {
         jet_rec.push_back(mergejet(jet_scin[jn],jet_cher[jn]));
       }
+//
+//    now clean the reco jets from the loopers
+// 
+     for(uint jn=0; jn<jet_rec.size();jn++) {
+//
+//   loop on components, 
+//
+//   if a cell is a looper cell,
+//   subtract the corresponding looper 
+//       
+//   if a ghost track is a looper track
+//   add the truth
+     }
 //   align truth jet with rec jets
 //
       for(uint jn=0; jn<jet_rec.size();jn++) {
