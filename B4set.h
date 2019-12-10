@@ -5,7 +5,8 @@
    VectorSignalsCherL = 0;
    VectorL = 0;
    VectorR = 0;
-
+   VectorR_loop=0;
+   VectorL_loop=0;
    tree2->SetBranchAddress("Energyem", &Energyem, &b_Energyem);
    tree2->SetBranchAddress("EnergyScin", &EnergyScin, &b_EnergyScin);
    tree2->SetBranchAddress("EnergyCher", &EnergyCher, &b_EnergyCher);
@@ -19,3 +20,5 @@
    tree2->SetBranchAddress("VectorSignalsCherL", &VectorSignalsCherL, &b_VectorSignalsCherL);
    tree2->SetBranchAddress("VectorL", &VectorL, &b_VectorL);
    tree2->SetBranchAddress("VectorR", &VectorR, &b_VectorR);
+   tree2->SetBranchAddress("VectorR_loop", &VectorR_loop, &b_VectorR_loop);
+   tree2->SetBranchAddress("VectorL_loop", &VectorL_loop, &b_VectorL_loop);

@@ -11,6 +11,8 @@
    vector<double>  *VectorSignalsCherL;
    vector<double>  *VectorL;
    vector<double>  *VectorR;
+   vector<double>  *VectorL_loop;
+   vector<double>  *VectorR_loop;
 
    // List of branches
    TBranch        *b_Energyem;   //!
@@ -26,3 +28,5 @@
    TBranch        *b_VectorSignalsCherL;   //!
    TBranch        *b_VectorL;   //!
    TBranch        *b_VectorR;   //!
+   TBranch        *b_VectorL_loop;
+   TBranch        *b_VectorR_loop;
